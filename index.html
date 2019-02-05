@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Template • TodoMVC</title>
+		<link rel="stylesheet" href="node_modules/todomvc-common/base.css">
+		<link rel="stylesheet" href="node_modules/todomvc-app-css/index.css">
+	</head>
+	<body>
+		<section class="todoapp" id="app">
+			<header class="header">
+				<h1>todos</h1>
+				<!-- v-focus input获得焦点 -->
+				<input class="new-todo" v-focus @keydown.enter='addTodos' placeholder="What needs to be done?">
+			</header>
+			<!-- template标签是 vue 提供的
+			他可以在页面渲染的时候不包含这个标签
+			也就是说它相当于是不存在的标签 -->
+			<template v-if='todos.length'>
+				<!-- 判断 todos.length 如果为 0 则是false 就隐藏这个结构  -->
+				<section class="main">
+					<input id="toggle-all" class="toggle-all" type="checkbox" @change='todoToggle'
+					:checked='checkedTodos'>
+					<!-- 调用计算属性中的 checkedTodos 方法来动态控制高亮显示 -->
+					<label for="toggle-all">Mark all as complete</label>
+					<ul class="todo-list">
+						<!-- completed类名 是删除线效果 -->
+						<li v-for='(item,index) in todosFilter' :class="{completed: item.completed, editing: item === currentTodo}">
+							<div class="view">
+								<input class="toggle" type="checkbox" v-model='item.completed'>
+								<!-- dblclick 是鼠标双击事件 -->
+								<label @dblclick='editTodo(item)'>{{item.name}}</label>
+								<button class="destroy" @click='removeTodo(index)'></button>
+							</div>
+							<input class="edit" v-edit :value="item.name"
+							@keydown.enter='saveTodo(index, item, $event)'
+							@blur='saveTodo(index, item, $event)'
+							@keydown.esc='cancelEditTodo'>
+						</li>
+					</ul>
+				</section>
+				<footer class="footer">
+					<!-- todos 未完成数量显示 -->
+					<span class="todo-count"><strong>{{ todosComplted }}</strong> item left</span>
+					<ul class="filters">
+						<li>
+							<!-- 样式切换 -->
+							<a :class="{selected: filterText != 'active' && filterText != 'completed'}" href="#/all">All</a>
+						</li>
+						<li>
+							<a :class="{selected: filterText == 'active'}" href="#/active">Active</a>
+						</li>
+						<li>
+							<a :class="{selected: filterText == 'completed'}" href="#/completed">Completed</a>
+						</li>
+					</ul>
+					<!-- Hidden if no completed items are left ↓ -->
+					<!-- v-if指令 可以控制元素隐藏和显示
+							some 函数可以返回其中一个条件为true的返回值
+							如果其中一个为true 则返回true
+							如果所有条件都为false 则返回false
+					-->
+					<button v-if='todos.some(function(item){  return item.completed })' class="clear-completed" @click='clearCompletedTodo'>Clear completed</button>
+				</footer>
+			</template>
+
+		</section>
+		<footer class="info">
+			<p>Double-click to edit a todo</p>
+			<p>Template by <a href="http://sindresorhus.com">Sindre Sorhus</a></p>
+			<p>Created by <a href="http://todomvc.com">you</a></p>
+			<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+		</footer>
+		<script src="node_modules/vue/dist/vue.js"></script>
+		<script src="js/app.js"></script>
+	</body>
+</html>
